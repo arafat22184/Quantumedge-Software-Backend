@@ -167,7 +167,7 @@ const auth = (req, res, next) => {
       res.send(result);
     });
 
-    // -------- Jobs
+    // -------- Singe Job Get
     app.get("/api/jobs/:id", auth, async (req, res) => {
       const { id } = req.params;
       const result = await jobs.findOne({ _id: new ObjectId(id) });
@@ -185,6 +185,63 @@ const auth = (req, res, next) => {
       } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Failed to post job" });
+      }
+    });
+
+    // PUT /api/jobs/:id - Update a job
+    app.put("/api/jobs/:id", auth, async (req, res) => {
+      try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        // Check if the ID is a valid MongoDB ObjectId
+        if (!ObjectId.isValid(id)) {
+          return res.status(400).json({ message: "Invalid job ID" });
+        }
+
+        // Check if the job exists and belongs to the authenticated user
+        const existingJob = await jobs.findOne({
+          _id: new ObjectId(id),
+          authorEmail: req.user.email,
+        });
+
+        if (!existingJob) {
+          return res
+            .status(404)
+            .json({ message: "Job not found or unauthorized" });
+        }
+
+        // Prepare the update object
+        const updateFields = {
+          title: updateData.title,
+          price: updateData.price,
+          pricingType: updateData.pricingType,
+          description: updateData.description,
+          location: updateData.location,
+          experienceLevel: updateData.experienceLevel,
+          vacancy: updateData.vacancy,
+          skills: updateData.skills,
+          updatedAt: new Date(),
+        };
+
+        // Perform the update
+        const result = await jobs.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updateFields }
+        );
+
+        if (result.matchedCount === 0) {
+          return res.status(404).json({ message: "Job not found" });
+        }
+
+        // Return the updated job
+        const updatedJob = await jobs.findOne({ _id: new ObjectId(id) });
+        res.json({
+          message: "Job updated successfully",
+          job: updatedJob,
+        });
+      } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
       }
     });
 
