@@ -245,6 +245,22 @@ const auth = (req, res, next) => {
       }
     });
 
+    // Delete a job by ID
+    app.delete("/api/jobs/:id", auth, async (req, res) => {
+      try {
+        const { id } = req.params;
+        const result = await jobs.deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.json({ message: "Job deleted successfully" });
+      } catch (err) {
+        res.status(500).json({ message: "Server error" });
+      }
+    });
+
     app.listen(port, () => console.log(`API: http://localhost:${port}`));
   } catch (e) {
     e && console.log(e);
