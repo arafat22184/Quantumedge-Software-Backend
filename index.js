@@ -14,7 +14,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://nexrox-digital.vercel.app",
+    origin: [
+      "https://nexrox-digital.vercel.app",
+      "http://localhost:5173",
+      "https://hilarious-dolphin-b5dd58.netlify.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
