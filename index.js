@@ -14,9 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN?.split(",") || [
-      "https://nexrox-digital.vercel.app",
-    ],
+    origin: "https://nexrox-digital.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
