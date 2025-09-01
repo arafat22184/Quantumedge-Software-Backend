@@ -164,12 +164,12 @@ const auth = (req, res, next) => {
     });
 
     // -------- Jobs
-    app.get("/api/jobs", auth, async (req, res) => {
+    app.get("/api/jobs", async (req, res) => {
       const result = await jobs.find().toArray();
       res.send(result);
     });
 
-    // -------- Singe Job Get
+    // -------- Single Job Get
     app.get("/api/jobs/:id", auth, async (req, res) => {
       const { id } = req.params;
       const result = await jobs.findOne({ _id: new ObjectId(id) });
