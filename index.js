@@ -167,6 +167,13 @@ const auth = (req, res, next) => {
       res.send(result);
     });
 
+    // -------- Jobs
+    app.get("/api/jobs/:id", auth, async (req, res) => {
+      const { id } = req.params;
+      const result = await jobs.findOne({ _id: new ObjectId(id) });
+      res.send(result);
+    });
+
     // POST /api/jobs
     app.post("/api/jobs", auth, async (req, res) => {
       try {
